@@ -4,9 +4,14 @@ node('master') {
     checkout scm
   }
   
+   stage('Preparation') { // for display purposes
+      // Get the Maven tool           
+      mvnHome = tool 'M3'
+   }
+  
   stage('Build & Unit test'){
     /*  Where -DskipITs=true is the option to skip the integration test and perform only the build and unit test. */
-    sh 'mvn clean verify -DskipITs=true';
+    sh '"$mvnHome/bin/mvn" clean verify -DskipITs=true';
     /*  publish JUnit unit test reports on the Jenkins pipeline page. */
     junit '**/target/surefire-reports/TEST-*.xml'
     archive 'target/*.jar'
@@ -14,7 +19,7 @@ node('master') {
   
   stage ('Integration Test'){
     /*  Where -Dsurefire.skip=true is the option to skip unit testing and perform only the integration testing. */
-    sh 'mvn clean verify -Dsurefire.skip=true';
+    sh '"$mvnHome/bin/mvn" clean verify -Dsurefire.skip=true';
     /*  publish JUnit unit test reports on the Jenkins pipeline page.*/
     junit '**/target/failsafe-reports/TEST-*.xml'
     archive 'target/*.jar'
